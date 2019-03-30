@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block head %}
+{{ super() }}
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+{% endblock head %}
+{% block content %}
+<div class="content">
+    <input id="raw_events" class="form-control" type="text" placeholder="No events yet" readonly>
+</div>
+{% endblock content %}
+{% block body %}
+{{ super() }}
+<script type="text/javascript">
+    console.log("Running ...")
+    $(document).ready(function () { setupSocketIO(); })
+</script>
+{% endblock body %}
