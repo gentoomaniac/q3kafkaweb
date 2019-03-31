@@ -1,6 +1,15 @@
 var session_id;
 var players = {};
 
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function setupSocketIO() {
     var socket = io.connect('http://' + document.domain + ':' + location.port + '/events');
     socket.on('connect', function () {
@@ -55,6 +64,7 @@ function onKillEvent(msg) {
 function onClinetConnect(msg) {
     // {"timestamp": "2019-03-31T12:11:44.846638", "event": "ClientConnect", "client_id": "0"}
     console.log('New client connected: ' + msg.client_id);
+    players['client_id'] = {};
 }
 
 function onClientUserinfoChanged(msg) {
@@ -69,6 +79,21 @@ function onItem(msg) {
 function killEventToHTML(msg) {
     var timestamp = new Date(msg.timestamp);
     var html = '<tr><td class="fit">' + timestamp.toLocaleTimeString() + '</td><td class="fit"><i class="fas fa-skull-crossbones"></i></td><td class="fit"><img src="' + msg.weapon_icon + '" width=16 height=16></td>';
-    html += '<td>' + msg.target_name + ' got fragged by ' + msg.actor_name + '</td>';
+    html += '<td>' + getKillMessage(msg) + '</td>';
     return html;
+}
+
+function getKillMessage(msg) {
+    var text;
+    if (msg.actor_name == '<world>' && msg.weapon_name == 'MOD_FALLING') {
+        text = msg.target_name + ' cratered';
+    } else if (msg.actor_name == '<world>' && msg.weapon_name == 'MOD_TRIGGER_HURT') {
+        text = msg.target_name + ' was in the wrong place';
+    } else if (msg.actor_name == msg.target_name) {
+        text = msg.target_name + ' blew itself up';
+    } else {
+        text = msg.target_name + ' got fragged by ' + msg.actor_name;
+    }
+
+    return text;
 }
