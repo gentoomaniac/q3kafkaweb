@@ -26,6 +26,7 @@ function setupSocketIO() {
     });
     socket.on('disconnect', function () {
         console.log('Websocket disconnected.');
+
     });
 };
 
@@ -45,6 +46,12 @@ function eventHandler(msg) {
 
         case 'Kill':
             onKillEvent(msg);
+            break;
+
+        case 'say':
+        case 'sayteam':
+        case 'tell':
+            onChatEvent(msg);
             break;
 
         default:
@@ -76,10 +83,31 @@ function onItem(msg) {
     // {'timestamp': '2019-03-31T13:11:25.061939', 'event': 'Item', 'item_whatever': '2', 'item': 'item_armor_shard'}
 }
 
+function onChatEvent(msg) {
+    // {"timestamp":"2019-03-31T23:09:23.210974","event":"tell","actor_name":"Visor","target_name":"Major","msg":"Ms. Major, Sir follow me"}
+    var chat_table = $('#chat_table tbody');
+    var old = chat_table.html().trim();
+    chat_table.html([old, chatEventToHTML(msg)].join('\n'));
+    $('#chat_div').animate({ scrollTop: $('#chat_div').prop("scrollHeight") }, 500);
+}
+
+function chatEventToHTML(msg) {
+    var timestamp = new Date(msg.timestamp);
+    var html = '<tr><td class="fit">' + timestamp.toLocaleTimeString() + '</td>';
+
+    if (msg.event == 'tell')
+        html += '<td class="fit">' + msg.actor_name + ' <i class="fas fa-arrow-right"></i> ' + msg.target_name + '</td>';
+    else if (msg.event == 'say')
+        html += '<td class="fit">' + msg.actor_name + '</td>';
+
+    html += '<td>' + msg.msg + '</td></tr>';
+    return html;
+}
+
 function killEventToHTML(msg) {
     var timestamp = new Date(msg.timestamp);
     var html = '<tr><td class="fit">' + timestamp.toLocaleTimeString() + '</td><td class="fit"><i class="fas fa-skull-crossbones"></i></td><td class="fit"><img src="' + msg.weapon_icon + '" width=16 height=16></td>';
-    html += '<td>' + getKillMessage(msg) + '</td>';
+    html += '<td>' + getKillMessage(msg) + '</td></tr>';
     return html;
 }
 

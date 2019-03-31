@@ -39,7 +39,8 @@ def _setup_weapon_icon_mapping():
             'MOD_ROCKET_SPLASH': url_for('static', filename='img/iconw_rocket_32.png'),
             'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png'),
             'MOD_TRIGGER_HURT': url_for('static', filename='img/world_kill_32.png'),
-            'MOD_FALLING': url_for('static', filename='img/world_kill_32.png')
+            'MOD_FALLING': url_for('static', filename='img/world_kill_32.png'),
+            'MOD_TELEFRAG': url_for('static', filename='img/teleporter_32.png')
         }
 
 
@@ -47,7 +48,8 @@ def decorate_event(message):
     decorated = message.copy()
 
     if 'weapon_name' in message:
-        decorated['weapon_icon'] = WEAPON_ICON_MAPPING[message['weapon_name']]
+        decorated['weapon_icon'] = WEAPON_ICON_MAPPING.get(message['weapon_name'],
+                                                           url_for('static', filename='img/no_icon_32.png'))
     return decorated
 
 
