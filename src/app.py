@@ -19,19 +19,61 @@ bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
 
 consumers = {}
+WEAPON_ICON_MAPPING = {}
+
+
+def _setup_weapon_icon_mapping():
+    global WEAPON_ICON_MAPPING
+
+    if not WEAPON_ICON_MAPPING:
+        WEAPON_ICON_MAPPING = {
+            'MOD_GAUNTLET': url_for('static', filename='img/iconw_gauntlet_32.png'),
+            'MOD_MACHINEGUN': url_for('static', filename='img/iconw_machinegun_32.png'),
+            'MOD_SHOTGUN': url_for('static', filename='img/iconw_shotgun_32.png'),
+            'MOD_GRENADE': url_for('static', filename='img/iconw_grenade_32.png'),
+            'MOD_LIGHTNING': url_for('static', filename='img/iconw_lightning_32.png'),
+            'MOD_PLASMA': url_for('static', filename='img/iconw_plasma_32.png'),
+            'MOD_PLASMA_SPLASH': url_for('static', filename='img/iconw_plasma_32.png'),
+            'MOD_RAILGUN': url_for('static', filename='img/iconw_railgun_32.png'),
+            'MOD_ROCKET': url_for('static', filename='img/iconw_rocket_32.png'),
+            'MOD_ROCKET_SPLASH': url_for('static', filename='img/iconw_rocket_32.png'),
+            'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png')
+        }
+
+
+def decorate_event(message):
+    decorated = message.copy()
+
+    if 'weapon_name' in message:
+        decorated['weapon_icon'] = WEAPON_ICON_MAPPING[message['weapon_name']]
+    return decorated
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html',)
 
 
 @socketio.on('get_all', namespace='/events')
-def handle_message(message):
+def get_all(message):
     log.info('client asking for all events: %s', session['kafka_id'])
+    _setup_weapon_icon_mapping()
     for kafka_msg in consumers[session['kafka_id']]:
-        log.info('emitting event: %s', kafka_msg.value)  #TODO
-        emit('event', json.dumps(kafka_msg.value))
+        event = decorate_event(kafka_msg.value)
+        log.info('emitting event: %s', event)
+        emit('event', json.dumps(event))
+
+
+@socketio.on('get_latest', namespace='/events')
+def get_latest(message):
+    consumers[session['kafka_id']].poll()
+    consumers[session['kafka_id']].seekToEnd()
+    log.info('client asking for latest events: %s', session['kafka_id'])
+    _setup_weapon_icon_mapping()
+    for kafka_msg in consumers[session['kafka_id']]:
+        event = decorate_event(kafka_msg.value)
+        log.info('emitting event: %s', event)
+        emit('event', json.dumps(event))
 
 
 @socketio.on('connect', namespace='/events')

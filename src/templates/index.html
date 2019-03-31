@@ -4,8 +4,10 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 {% endblock head %}
 {% block content %}
-<div class="content">
-    <textarea id="raw_events" class="form-control" rows=5 placeholder="No events yet" readonly></textarea>
+<div class="content" id="kill_div" style="height: 200px; overflow-y: scroll;">
+    <table class="table-sm table-dark" id="kill_table" style="width: 100%;">
+        <tbody></tbody>
+    </table>
 </div>
 {% endblock content %}
 {% block body %}
