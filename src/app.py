@@ -37,7 +37,9 @@ def _setup_weapon_icon_mapping():
             'MOD_RAILGUN': url_for('static', filename='img/iconw_railgun_32.png'),
             'MOD_ROCKET': url_for('static', filename='img/iconw_rocket_32.png'),
             'MOD_ROCKET_SPLASH': url_for('static', filename='img/iconw_rocket_32.png'),
-            'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png')
+            'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png'),
+            'MOD_TRIGGER_HURT': url_for('static', filename='img/world_kill_32.png'),
+            'MOD_FALLING': url_for('static', filename='img/world_kill_32.png')
         }
 
 
