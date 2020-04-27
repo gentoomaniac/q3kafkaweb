@@ -12,6 +12,8 @@ from flask_socketio import SocketIO, send, emit
 from kafka import KafkaConsumer
 from kafka.errors import KafkaError
 
+from message_queue import MessageQueue
+
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 log = logging.getLogger(__file__)
 
@@ -20,64 +22,18 @@ WEAPON_ICON_MAPPING = {}
 
 from flask import Flask
 
-POOL_TIME = 1  #Seconds
+POLL_TIME = 1  #Seconds
 
-# variables that are accessible from anywhere
-commonDataStruct = {'events': []}
-# thread handler
-yourThread = threading.Thread()
+cache = MessageQueue()
+consumer_sessions = {}
 
 
-def create_app():
-    app = Flask(__name__)
-    _setup_weapon_icon_mapping()
-
-    kafka_id = str(uuid.uuid4())
-    consumer = KafkaConsumer(
-        'quake3',
-        group_id=kafka_id,
-        client_id=kafka_id,
-        value_deserializer=lambda m: json.loads(m.decode('ascii')),
-        bootstrap_servers=['localhost:9092'])
-
-    def interrupt():
-        global yourThread
-        yourThread.cancel()
-
-    def doStuff():
-        global commonDataStruct
-        global yourThread
-
-        consumer.poll()
-        consumer.seekToEnd()
-        for kafka_msg in consumer:
-            event = decorate_event(kafka_msg.value)
-            commonDataStruct['events'].append(event)
-            log.debug(json.dumps(event))
-
-        # Set the next thread to happen
-        yourThread = threading.Timer(POOL_TIME, doStuff, ())
-        yourThread.start()
-
-    def doStuffStart():
-        # Do initialisation stuff here
-        global yourThread
-
-        log.info('initially getting all events: %s', kafka_id)
-        for kafka_msg in consumer:
-            event = decorate_event(kafka_msg.value)
-            commonDataStruct['events'].append(event)
-            log.debug(json.dumps(event))
-
-        # Create your thread
-        yourThread = threading.Timer(POOL_TIME, doStuff, ())
-        yourThread.start()
-
-    # Initiate
-    doStuffStart()
-    # When you kill Flask (SIGTERM), clear the trigger for the next thread
-    atexit.register(interrupt)
-    return app
+def _load_events(consumer, cache):
+    log.info('loading old events: %s', kafka_id)
+    for kafka_msg in consumer:
+        event = kafka_msg.value  #decorate_event(kafka_msg.value)
+        cache.push(event)
+        log.info("new event: %s" % json.dumps(event))
 
 
 def _setup_weapon_icon_mapping():
@@ -98,7 +54,8 @@ def _setup_weapon_icon_mapping():
             'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png'),
             'MOD_TRIGGER_HURT': url_for('static', filename='img/world_kill_32.png'),
             'MOD_FALLING': url_for('static', filename='img/world_kill_32.png'),
-            'MOD_TELEFRAG': url_for('static', filename='img/teleporter_32.png')
+            'MOD_TELEFRAG': url_for('static', filename='img/teleporter_32.png'),
+            'NO_ICON': url_for('static', filename='img/no_icon_32.png'),
         }
 
 
@@ -106,15 +63,26 @@ def decorate_event(message):
     decorated = message.copy()
 
     if 'weapon_name' in message:
-        decorated['weapon_icon'] = WEAPON_ICON_MAPPING.get(message['weapon_name'],
-                                                           url_for('static', filename='img/no_icon_32.png'))
+        decorated['weapon_icon'] = WEAPON_ICON_MAPPING.get(message['weapon_name'], WEAPON_ICON_MAPPING['NO_ICON'])
     return decorated
 
 
-app = create_app()
+app = Flask(__name__)
 app.secret_key = os.getenv('APP_SECRET', str(uuid.uuid4()))
 bootstrap = Bootstrap(app)
 socketio = SocketIO(app)
+
+kafka_id = str(uuid.uuid4())
+consumer = KafkaConsumer(
+    'quake3',
+    group_id=kafka_id,
+    client_id=kafka_id,
+    value_deserializer=lambda m: json.loads(m.decode('ascii')),
+    bootstrap_servers=['localhost:9092'])
+
+background_consumer_thread = threading.Timer(POLL_TIME, _load_events, (consumer, cache))
+background_consumer_thread.start()
+atexit.register(background_consumer_thread.cancel)
 
 
 @app.route('/')
@@ -124,31 +92,29 @@ def index():
 
 @socketio.on('get_all', namespace='/events')
 def get_all(message):
-    log.info('client asking for all events: %s', session['kafka_id'])
-    _setup_weapon_icon_mapping()
-    for kafka_msg in consumers[session['kafka_id']]:
-        event = decorate_event(kafka_msg.value)
-        log.info('emitting event: %s', event)
-        emit('event', json.dumps(event))
+    log.info('client asking for all events: %s', request.sid)
+    event_id = 0
+    while True:
+        try:
+            _, event = consumer_sessions[request.sid].next()
+        except KeyError:
+            log.debug("Client session terminated: %s", request.sid)
+            break
 
-
-@socketio.on('get_latest', namespace='/events')
-def get_latest(message):
-    consumers[session['kafka_id']].poll()
-    consumers[session['kafka_id']].seekToEnd()
-    log.info('client asking for latest events: %s', session['kafka_id'])
-    _setup_weapon_icon_mapping()
-    for kafka_msg in consumers[session['kafka_id']]:
-        event = decorate_event(kafka_msg.value)
-        log.info('emitting event: %s', event)
-        emit('event', json.dumps(event))
+        emit('event', json.dumps(decorate_event(event)))
 
 
 @socketio.on('connect', namespace='/events')
 def on_connect_handler():
-    client_session_id = str(uuid.uuid4())
-    session['client_id'] = client_session_id
-    emit('connected', json.dumps({'session_id': client_session_id}))
+    _setup_weapon_icon_mapping()
+    consumer_sessions[request.sid] = MessageQueue()
+    emit('connected', json.dumps({'session_id': request.sid}))
+
+
+@socketio.on('disconnect', namespace='/events')
+def on_disconnect_handler():
+    consumer_sessions.pop(request.sid, None)
+    log.debug("client disconnected: %s", request.sid)
 
 
 if __name__ == '__main__':
