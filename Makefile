@@ -1,4 +1,4 @@
-.PHONY: dev
+.PHONY: dev test
 
 ifndef LISTEN_ADDR
 LISTEN_ADDR=127.0.0.1
@@ -16,3 +16,6 @@ dev: .venv
 .venv:
 	python3 -m venv $(VENV)
 	$(VENV)/bin/pip3 install --upgrade pip
+
+test:
+	$(VENV)/bin/python -m unittest -v
