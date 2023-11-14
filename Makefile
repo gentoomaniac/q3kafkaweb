@@ -11,7 +11,7 @@ VENV=.venv
 
 dev: .venv
 	$(VENV)/bin/pip3 install -e .
-	$(VENV)/bin/q3web
+	$(VENV)/bin/q3web -vvvv
 
 .venv:
 	python3 -m venv $(VENV)
