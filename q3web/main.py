@@ -9,7 +9,7 @@ import time
 
 import click
 
-from flask import Flask, render_template, request, url_for, session
+from flask import Flask, render_template, request, url_for
 from flask_bootstrap import Bootstrap
 from flask_socketio import SocketIO, emit
 
@@ -22,9 +22,7 @@ log = logging.getLogger(__name__)
 consumers = {}
 WEAPON_ICON_MAPPING = {}
 
-from flask import Flask
-
-POLL_TIME = 1  #Seconds
+POLL_TIME = 1    #Seconds
 
 cache = {'games': {}, 'matches': []}
 consumer_sessions = {}
@@ -34,9 +32,9 @@ KAFKA_ID = str(uuid.uuid4())
 def _load_events(consumer, cache):
     log.info('loading old events: %s', KAFKA_ID)
     for kafka_msg in consumer:
-        event = kafka_msg.value  #decorate_event(kafka_msg.value)
+        event = kafka_msg.value    #decorate_event(kafka_msg.value)
         cache.push(event)
-        log.info("new event: %s" % json.dumps(event))
+        log.info("new event: %s", json.dumps(event))
 
 
 def _consume_match_data(match_id: str):
@@ -53,9 +51,7 @@ def _consume_match_data(match_id: str):
         cache['games'][match_id].append(kafka_msg.value)
 
 
-def _setup_weapon_icon_mapping():
-    global WEAPON_ICON_MAPPING
-
+def _setup_weapon_icon_mapping(WEAPON_ICON_MAPPING):
     if not WEAPON_ICON_MAPPING:
         WEAPON_ICON_MAPPING = {
             'MOD_GAUNTLET': url_for('static', filename='img/iconw_gauntlet_32.png'),
@@ -103,8 +99,7 @@ def get_all(game_id):
     if events:
         log.info("found events")
         event_queue = MessageQueueReader(events)
-        while True:
-            event = event_queue.next()
+        for event in event_queue:
             if event:
                 emit('event', json.dumps(decorate_event(event)))
                 if event['event'] == 'GameEnded':
@@ -118,7 +113,7 @@ def get_all(game_id):
 
 @socketio.on('connect', namespace='/events')
 def on_connect_handler():
-    _setup_weapon_icon_mapping()
+    _setup_weapon_icon_mapping(WEAPON_ICON_MAPPING)
     emit('connected', json.dumps({'session_id': request.sid}))
 
 
