@@ -1,4 +1,4 @@
-.PHONY: run venv
+.PHONY: dev
 
 ifndef LISTEN_ADDR
 LISTEN_ADDR=127.0.0.1
@@ -9,10 +9,10 @@ endif
 APP_SRC=src/app.py
 VENV=.venv
 
-run:
-	$(VENV)/bin/python3 $(APP_SRC)
+dev: .venv
+	$(VENV)/bin/pip3 install -e .
+	$(VENV)/bin/q3web
 
-venv:
+.venv:
 	python3 -m venv $(VENV)
 	$(VENV)/bin/pip3 install --upgrade pip
-	$(VENV)/bin/pip3 install -r requirements.txt
