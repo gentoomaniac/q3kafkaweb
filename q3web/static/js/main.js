@@ -1,5 +1,6 @@
 var session_id;
 var players = {};
+var sio = null;
 
 var COLORS = {
   "^0": "black",
@@ -36,22 +37,25 @@ function translateColorcodeString(string) {
 }
 
 function setupSocketIO() {
-  var socket = io.connect(
-    "http://" + document.domain + ":" + location.port + "/events"
+  sio = io.connect(
+    new URL("/events", window.location.href.split('?')[0]).href
   );
-  socket.on("connect", function () {
+  sio.on("connect", function () {
     console.log("Websocket connecting...");
   });
-  socket.on("event", function (msg) {
+  sio.on("event", function (msg) {
     msg = JSON.parse(msg);
+    console.log(msg)
     eventHandler(msg);
   });
-  socket.on("connected", function (msg) {
+  sio.on("connected", function (msg) {
     session_id = msg.session_id;
-    console.log("Websocket connected: " + msg.session_id);
-    socket.emit("get_all", { data: "Give me all you have" });
+    console.log("Websocket connected");
+    var url = new URL(window.location.href);
+    var match_id = url.searchParams.get("match_id");
+    sio.emit("get_all", match_id);
   });
-  socket.on("disconnect", function () {
+  sio.on("disconnect", function () {
     console.log("Websocket disconnected.");
   });
 }
@@ -125,7 +129,7 @@ function onChatEvent(msg) {
   chat_table.html([old, chatEventToHTML(msg)].join("\n"));
   $("#chat_div").animate(
     { scrollTop: $("#chat_div").prop("scrollHeight") },
-    500
+    50
   );
 }
 

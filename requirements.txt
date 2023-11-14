@@ -1,4 +1,0 @@
-Flask
-Flask-Bootstrap4
-flask-socketio
-kafka-python
