@@ -50,6 +50,21 @@ class TestMessageQueueReader(unittest.TestCase):
         queue_reader.reset()
         self.assertEqual(queue_reader.has_next(), True, "reset() did not reset the iterator")
 
+    def test_if_has_next_after_data_appended(self):
+        data = TEST_DATA.copy()
+        queue_reader = MessageQueueReader(data)
+
+        for _ in queue_reader:
+            pass
+
+        element = "new last element"
+        data.append(element)
+
+        self.assertEqual(queue_reader.has_next(), True,
+                         "has_next() returns False after data has been appended to queue")
+
+        self.assertEqual(next(queue_reader), element, "returned element is not equal to the appended element")
+
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)

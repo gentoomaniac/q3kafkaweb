@@ -4,11 +4,14 @@ log = logging.getLogger(__name__)
 
 
 class MessageQueueReader():
+    """ A reader of a given list.
+        The Reader manages the index to the last read element.
+    """
 
-    def __init__(self, messages: list):
+    def __init__(self, data: list):
         self._index = 0
         self._base_index = None
-        self._data = messages
+        self._data = data
 
     def __iter__(self):
         if self._base_index:
@@ -28,7 +31,7 @@ class MessageQueueReader():
         """ Return true if there is new elements in the data
             else return false
         """
-        return len(self._data) - 1 > self._index
+        return self._index < len(self._data)
 
     def set_index(self, index: int):
         """ Set the internal index to the given value
