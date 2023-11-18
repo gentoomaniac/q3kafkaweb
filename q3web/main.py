@@ -25,7 +25,8 @@ def cli(verbosity: int):
     _configure_logging(verbosity)
 
     logging.getLogger('kafka').setLevel(logging.CRITICAL)
-    server.socketio.run(server.app, port=8000, debug=True)
+
+    server.start(port=8000, debug=True)
 
     return 0
 

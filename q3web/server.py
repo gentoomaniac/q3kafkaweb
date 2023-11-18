@@ -19,11 +19,14 @@ log = logging.getLogger(__name__)
 consumers = {}
 WEAPON_ICON_MAPPING = {}
 
-POLL_TIME = 1    #Seconds
+RUN = True
+metadata_thread = None
 
-cache = {'games': {}, 'matches': []}
+cache = {'matches': {}}
 consumer_sessions = {}
 KAFKA_ID = str(uuid.uuid4())
+
+# ToDo: global consumer that handles all kafka messages and subscribes/unsubscribes from topics
 
 
 def _load_events(consumer, cache):
@@ -31,11 +34,10 @@ def _load_events(consumer, cache):
     for kafka_msg in consumer:
         event = kafka_msg.value    #decorate_event(kafka_msg.value)
         cache.push(event)
-        log.info("new event: %s", json.dumps(event))
+        log.debug("new event: %s", json.dumps(event))
 
 
 def _consume_match_data(match_id: str):
-    log.debug("consuming match with id %s", match_id)
     consumer = kafka.KafkaConsumer(match_id,
                                    group_id=KAFKA_ID,
                                    client_id=KAFKA_ID,
@@ -43,9 +45,40 @@ def _consume_match_data(match_id: str):
                                    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
                                    bootstrap_servers=['127.0.0.1:9092'])
 
-    cache['games'][match_id] = []
+    log.debug("consuming match with id %s", match_id)
+
+    running = True
+    while running:
+        data = consumer.poll()
+        log.debug(data)
+
+        for kafka_msg in data.get(match_id, []):
+            cache['matches'][match_id]['messages'].append(kafka_msg.value)
+            log.debug(kafka_msg.value)
+            if kafka_msg.value['event'] == 'GameEnded':
+                log.debug("finished consuming %s", match_id)
+                running = False
+                return
+        time.sleep(1)
+
+    log.debug("nothing to consume %s", match_id)
+
+
+def _consume_match_metadata():
+    log.debug("consuming meta information about matches")
+    consumer = kafka.KafkaConsumer('matches',
+                                   group_id=KAFKA_ID,
+                                   client_id=KAFKA_ID,
+                                   key_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                                   value_deserializer=lambda m: json.loads(m.decode('utf-8')),
+                                   bootstrap_servers=['127.0.0.1:9092'])
+
+    log.debug("consuming events ...")
     for kafka_msg in consumer:
-        cache['games'][match_id].append(kafka_msg.value)
+        log.debug(kafka_msg.value)
+        cache['matches'][kafka_msg.value['id']].update(kafka_msg.value)
+        if not RUN:
+            return
 
 
 def _setup_weapon_icon_mapping(WEAPON_ICON_MAPPING):
@@ -95,26 +128,33 @@ def index():
     return render_template('index.html',)
 
 
-@socketio.on('get_all', namespace='/events')
-def get_all(game_id):
-    """ Handles a request from the web app to retrieve all events that already exist
+@socketio.on('subscribe', namespace='/events')
+def subscribe(game_id):
+    """ Handles a request from the web app to retrieve events for a match
     """
     log.info("client '%s' asking for game %s", request.sid, game_id)
-    log.info(cache)
-    events = cache['games'].get(game_id)
-    if events:
-        log.info("found events")
-        event_queue = MessageQueueReader(events)
-        for event in event_queue:
-            if event:
-                emit('event', json.dumps(decorate_event(event)))
-                if event['event'] == 'GameEnded':
-                    break
-            else:
-                time.sleep(0.5)
-    else:
-        emit('event', json.dumps({'event': 'NoSuchGame'}))
-        log.info("client '%s' requested invalid game id '%s'", request.sid, game_id)
+
+    if not game_id in cache['matches']:
+        cache['matches'][game_id] = {'messages': [], 'consumer_thread': None}
+        t = threading.Thread(target=_consume_match_data, kwargs={'match_id': game_id})
+        t.daemon = True
+        t.start()
+
+    game = cache['matches'][game_id]
+
+    log.info("processing game events ...")
+    event_queue = MessageQueueReader(game['messages'])
+    for event in event_queue:
+        if not RUN:
+            return
+
+        if event:
+            emit('event', json.dumps(decorate_event(event)))
+            if event['event'] == 'GameEnded':
+                break
+        else:
+            time.sleep(0.5)
+    log.debug("finished handling `subscribe`")
 
 
 @socketio.on('connect', namespace='/events')
@@ -132,15 +172,28 @@ def on_disconnect_handler():
     log.debug("client disconnected: %s", request.sid)
 
 
-# def cli(verbosity: int, match: str):
+def _shutdown():
+    global RUN
+    RUN = False
+    if metadata_thread:
+        metadata_thread.join()
+    for id, data in cache['matches']:
+        if data['consumer_thread']:
+            data['consumer_thread'].join()
 
-#     background_consumer_thread = threading.Timer(interval=POLL_TIME,
-#                                                  function=_consume_match_data,
-#                                                  kwargs={'match_id': match})
-#     background_consumer_thread.start()
-#     atexit.register(background_consumer_thread.cancel)
 
-#     logging.getLogger('kafka').setLevel(logging.CRITICAL)
-#     socketio.run(app, port=8000, debug=True)
+def start(port=8000, debug=True):
+    """ Set up background processes to consume kafka topics
+    """
+    logging.getLogger('kafka').setLevel(logging.ERROR)
 
-#     return 0
+    # global metadata_thread
+    # metadata_thread = threading.Thread(target=_consume_match_metadata)
+    # metadata_thread.daemon = True    # Set the thread as a daemon
+    # metadata_thread.start()
+    atexit.register(_shutdown)
+
+    log.info("Starting socketio app")
+    socketio.run(app, port=port, debug=debug)
+
+    return 0

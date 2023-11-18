@@ -53,7 +53,7 @@ function setupSocketIO() {
     console.log("Websocket connected");
     var url = new URL(window.location.href);
     var match_id = url.searchParams.get("match_id");
-    sio.emit("get_all", match_id);
+    sio.emit("subscribe", match_id);
   });
   sio.on("disconnect", function () {
     console.log("Websocket disconnected.");

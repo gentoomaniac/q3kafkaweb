@@ -1,4 +1,4 @@
-.PHONY: dev test
+.PHONY: dev test clean
 
 ifndef LISTEN_ADDR
 LISTEN_ADDR=127.0.0.1
@@ -6,7 +6,6 @@ endif
 ifndef LISTEN_PORT
 LISTEN_PORT=5000
 endif
-APP_SRC=src/app.py
 VENV=.venv
 
 dev: .venv
@@ -19,3 +18,7 @@ dev: .venv
 
 test:
 	$(VENV)/bin/python -m unittest -v
+
+clean:
+	find . -type d -name '__pycache__' -exec rm -rf {} \;
+	find . -type d -name '*.egg-info' -exec rm -rf {} \;
