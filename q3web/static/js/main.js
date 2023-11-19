@@ -168,7 +168,7 @@ function killEventToHTML(msg) {
   var html =
     '<tr><td class="fit">' +
     timestamp.toLocaleTimeString() +
-    '</td><td class="fit"><i class="fas fa-skull-crossbones"></i></td><td class="fit"><img src="' +
+    '</td><td class="fit"><i class="fa-solid fa-skull"></i></td><td class="fit"><img src="' +
     msg.weapon_icon +
     '" width=16 height=16 title="' + msg.weapon_name + '"></td>';
   html += "<td>" + colorParseText(getKillMessage(msg)) + "</td></tr>";
