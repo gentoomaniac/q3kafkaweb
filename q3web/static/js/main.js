@@ -106,12 +106,14 @@ function eventHandler(msg) {
 function onKillEvent(msg) {
   // {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1',
   // 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN'}
+  console.log(msg);
+
   if ( !(msg.weapon_id in GameState.weapons)){
     GameState.weapons[msg.weapon_id] = getNewWeaponDict(msg.weapon_name);
   }
-  console.log(msg);
+  GameState.weapons[msg.weapon_id].kills++;
+
   if (msg.actor_id != WORLD_ID) {
-    GameState.weapons[msg.weapon_id].kills++;
     GameState.players[msg.actor_id].kills++;
     GameState.players[msg.target_id].frags++;
   } else {
