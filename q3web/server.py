@@ -9,7 +9,7 @@ import uuid
 import kafka
 
 from flask import Flask, render_template, request, url_for
-from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap5
 from flask_socketio import SocketIO, emit
 
 from q3web.message_queue import MessageQueueReader
@@ -94,7 +94,7 @@ def decorate_event(message):
 def _get_app(secret_key=str(uuid.uuid4())):
     app = Flask(__name__)
     app.secret_key = secret_key
-    return app, SocketIO(app), Bootstrap(app)
+    return app, SocketIO(app), Bootstrap5(app)
 
 
 app, socketio, bootstrap = _get_app(os.getenv('APP_SECRET', str(uuid.uuid4())))
@@ -113,19 +113,20 @@ def subscribe(game_id):
     """
     log.info("client '%s' asking for game %s", request.sid, game_id)
 
-    log.debug(json.dumps(cache, indent=2, sort_keys=True))
-    game = cache['matches'][game_id]
+    game = cache['matches'].get(game_id, None)
+    if game is None:
+        emit('event', json.dumps({'error': "Game doesn't exist"}))
+        return
 
     log.info("processing game events ...")
     event_queue = MessageQueueReader(game['messages'])
     while RUN:
-        try:
-            event = next(event_queue)
-            if event:
-                emit('event', json.dumps(decorate_event(event)))
-                if event['event'] == 'GameEnded':
-                    break
-        except:
+        event = next(event_queue)
+        if event:
+            emit('event', json.dumps(decorate_event(event)))
+            if event['event'] == 'GameEnded':
+                break
+        else:
             time.sleep(1)
     log.debug("finished handling `subscribe`")
 

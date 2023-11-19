@@ -1,8 +1,12 @@
 {% extends "base.html" %}
+
 {% block head %}
 {{ super() }}
 <script type="text/javascript" src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-{% endblock head %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
+<script src="{{url_for('.static', filename='js/toplists.js')}}"></script>
+{% endblock %}
+
 {% block content %}
 <div class="content" id="kill_div" style="height: 200px; overflow-y: scroll;">
     <table class="table-sm table-dark" id="kill_table" style="width: 100%;">
@@ -10,15 +14,19 @@
     </table>
 </div>
 <div class="content" id="chat_div" style="height: 200px; overflow-y: scroll;">
-    <table class="table-sm" id="chat_table" style="width: 100%;">
+    <table class="table-sm table-dark" id="chat_table" style="width: 100%;">
         <tbody></tbody>
     </table>
 </div>
-{% endblock content %}
-{% block body %}
+<div class="content" id="toplist">
+    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+</div>
+{% endblock %}
+
+{% block footer_scripts %}
 {{ super() }}
 <script type="text/javascript">
     console.log("Running ...")
     $(document).ready(function () { setupSocketIO(); })
 </script>
-{% endblock body %}
+{% endblock %}
