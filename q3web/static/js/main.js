@@ -120,13 +120,7 @@ function onKillEvent(msg) {
     GameState.players[msg.target_id].deaths++;
   }
 
-  var kill_table = $("#kill_table tbody");
-  var old = kill_table.html().trim();
-  kill_table.html([old, killEventToHTML(msg)].join("\n"));
-  $("#kill_div").animate(
-    { scrollTop: $("#kill_div").prop("scrollHeight") },
-    50
-  );
+    $('#kill_table tbody').prepend(killEventToHTML(msg));
 }
 
 function onClinetConnect(msg) {
@@ -148,13 +142,7 @@ function onItem(msg) {
 
 function onChatEvent(msg) {
   // {"timestamp":"2019-03-31T23:09:23.210974","event":"tell","actor_name":"Visor","target_name":"Major","msg":"Ms. Major, Sir follow me"}
-  var chat_table = $("#chat_table tbody");
-  var old = chat_table.html().trim();
-  chat_table.html([old, chatEventToHTML(msg)].join("\n"));
-  $("#chat_div").animate(
-    { scrollTop: $("#chat_div").prop("scrollHeight") },
-    50
-  );
+  $('#chat_table tbody').prepend(chatEventToHTML(msg));
 }
 
 function chatEventToHTML(msg) {
