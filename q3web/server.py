@@ -28,7 +28,10 @@ def _consumer_thread():
                                    client_id=KAFKA_ID,
                                    key_deserializer=lambda m: json.loads(m.decode('utf-8')),
                                    value_deserializer=lambda m: json.loads(m.decode('utf-8')),
-                                   bootstrap_servers=['127.0.0.1:9092'])
+                                   bootstrap_servers=['127.0.0.1:9092'],
+                                   enable_auto_commit=True,
+                                   auto_commit_interval_ms=30 * 1000,
+                                   auto_offset_reset='smallest')
 
     consumer.subscribe(pattern=r'^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$')
 
@@ -37,6 +40,7 @@ def _consumer_thread():
         # log.debug(data)
 
         _process_messages(data)
+        consumer.commit()
 
         time.sleep(1)
 
