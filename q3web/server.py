@@ -42,8 +42,6 @@ def _consumer_thread():
         _process_messages(data)
         consumer.commit()
 
-        time.sleep(1)
-
 
 def _process_messages(data: dict):
     for topic_part in data:
@@ -121,12 +119,13 @@ def subscribe(game_id):
     log.info("processing game events ...")
     event_queue = MessageQueueReader(game['messages'])
     while RUN:
-        event = next(event_queue)
-        if event:
-            emit('event', json.dumps(decorate_event(event)))
-            if event['event'] == 'GameEnded':
-                break
-        else:
+        try:
+            event = next(event_queue)
+            if event:
+                emit('event', json.dumps(decorate_event(event)))
+                if event['event'] == 'GameEnded':
+                    break
+        except StopIteration:
             time.sleep(1)
     log.debug("finished handling `subscribe`")
 
