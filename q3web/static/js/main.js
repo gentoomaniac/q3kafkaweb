@@ -1,8 +1,9 @@
 var session_id;
-var players = {};
+var GameState = { 'players': {}, 'weapons': {}};
 var sio = null;
 
-var COLORS = {
+const WORLD_ID = "1022"
+const COLORS = {
   "^0": "black",
   "^1": "red",
   "^2": "green",
@@ -14,10 +15,18 @@ var COLORS = {
   "^8": "orange",
 };
 
+function getNewWeaponDict(name){
+    return {'name': name, 'kills': 0};
+}
+
+function getNewPlayerDict(){
+    return {'kills': 0, 'frags': 0, 'deaths': 0};
+}
+
 function getPlayerByName(name) {
-  Object.keys(players).forEach(function (key) {
-    console.log("checking player: " + players[key]);
-    if (players[key].name == name) return players[key];
+  Object.keys(GameState.players).forEach(function (key) {
+    console.log("checking player: " + GameState.players[key]);
+    if (GameState.players[key].name == name) return GameState.players[key];
   });
 
   return null;
@@ -45,7 +54,7 @@ function setupSocketIO() {
   });
   sio.on("event", function (msg) {
     msg = JSON.parse(msg);
-    console.log(msg)
+    // console.log(msg)
     eventHandler(msg);
   });
   sio.on("connected", function (msg) {
@@ -80,6 +89,7 @@ function eventHandler(msg) {
 
     case "Kill":
       onKillEvent(msg);
+      console.log(GameState);
       break;
 
     case "say":
@@ -96,6 +106,18 @@ function eventHandler(msg) {
 function onKillEvent(msg) {
   // {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1',
   // 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN'}
+  if ( !(msg.weapon_id in GameState.weapons)){
+    GameState.weapons[msg.weapon_id] = getNewWeaponDict(msg.weapon_name);
+  }
+  console.log(msg);
+  if (msg.actor_id != WORLD_ID) {
+    GameState.weapons[msg.weapon_id].kills++;
+    GameState.players[msg.actor_id].kills++;
+    GameState.players[msg.target_id].frags++;
+  } else {
+    GameState.players[msg.target_id].deaths++;
+  }
+
   var kill_table = $("#kill_table tbody");
   var old = kill_table.html().trim();
   kill_table.html([old, killEventToHTML(msg)].join("\n"));
@@ -108,14 +130,14 @@ function onKillEvent(msg) {
 function onClinetConnect(msg) {
   // {"timestamp": "2019-03-31T12:11:44.846638", "event": "ClientConnect", "client_id": "0"}
   console.log("New client connected: " + msg.client_id);
-  players[msg.client_id] = {};
+  GameState.players[msg.client_id] = getNewPlayerDict();
 }
 
 function onClientUserinfoChanged(msg) {
   // {"timestamp": "2019-03-31T12:11:44.848543", "event": "ClientUserinfoChanged", "client_id": "0",
   // "client_info": "n\\Visor\\t\\0\\model\\visor\\hmodel\\visor\\c1\\4\\c2\\5\\hc\\70\\w\\0\\l\\0\\skill\\    2.00\\tt\\0\\tl\\0"}
-  players[msg.client_id] = msg;
-  console.log("Player info changed: " + players[msg.client_id]);
+  GameState.players[msg.client_id] = {...GameState.players[msg.client_id], ...msg};
+  console.log("Player info changed: " + GameState.players[msg.client_id]);
 }
 
 function onItem(msg) {
