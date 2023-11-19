@@ -32,19 +32,6 @@ function getPlayerByName(name) {
   return null;
 }
 
-function escapeHtml(unsafe) {
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
-function translateColorcodeString(string) {
-  return colorCoded;
-}
-
 function setupSocketIO() {
   sio = io.connect(
     new URL("/events", window.location.href.split('?')[0]).href
@@ -125,7 +112,6 @@ function onKillEvent(msg) {
 
 function onClinetConnect(msg) {
   // {"timestamp": "2019-03-31T12:11:44.846638", "event": "ClientConnect", "client_id": "0"}
-  console.log("New client connected: " + msg.client_id);
   GameState.players[msg.client_id] = getNewPlayerDict();
 }
 
@@ -133,7 +119,6 @@ function onClientUserinfoChanged(msg) {
   // {"timestamp": "2019-03-31T12:11:44.848543", "event": "ClientUserinfoChanged", "client_id": "0",
   // "client_info": "n\\Visor\\t\\0\\model\\visor\\hmodel\\visor\\c1\\4\\c2\\5\\hc\\70\\w\\0\\l\\0\\skill\\    2.00\\tt\\0\\tl\\0"}
   GameState.players[msg.client_id] = {...GameState.players[msg.client_id], ...msg};
-  console.log("Player info changed: " + GameState.players[msg.client_id]);
 }
 
 function onItem(msg) {
