@@ -3,7 +3,11 @@ import { io } from 'socket.io-client';
 
 var session_id;
 var GameState = { 'players': {}, 'weapons': {}};
-var Events = [{'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_shotgun_32.png'}];
+var Events = [
+  {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_railgun_32.png'},
+  {'timestamp': '2019-03-31T10:35:07.853902', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_shotgun_32.png'},
+  {'timestamp': '2019-03-31T10:35:07.853903', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_rocket_32.png'}
+];
 var sio = null;
 
 const WORLD_ID = "1022"
@@ -171,25 +175,22 @@ function chatEventToHTML(msg) {
 }
 
 // TODO: add popup on player with player stats
-// TODO: turn this into DIVs and use a fade
 export function KillEvents() {
   const kills = Events.filter(event =>
     event.event === 'Kill'
   );
-  console.log(kills)
   const listItems = kills.map(k =>
     <li key={k.timestamp}>
-      <img
-        src={k.weapon_icon}
-        alt={k.weapon_name}
-      />
-      <p>
-        <b>{new Date(k.timestamp).toLocaleTimeString()}</b>
-        {colorParseText(getKillMessage(k))}
-      </p>
+      <div className="row">
+      <div className="block">
+          <img src={k.weapon_icon} alt={k.weapon_name} />
+          <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
+          <span className="content">{colorParseText(getKillMessage(k))}</span>
+      </div>
+      </div>
     </li>
   );
-  return <ul>{listItems}</ul>;
+  return <ul className="no-bullets">{listItems}</ul>;
 }
 
 function getKillMessage(msg) {

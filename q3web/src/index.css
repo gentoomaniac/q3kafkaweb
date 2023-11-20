@@ -11,3 +11,46 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.Scroll-box {
+  height: 400px;
+  width: 100%;
+  overflow-y:
+  scroll;
+}
+
+.block {
+  overflow: hidden;
+  padding: 1rem;
+  margin: 0 0 1rem 0;
+  border: 1px solid orange;
+ }
+
+.block img {
+  width: 32px;
+  height: 32px;
+  float: left;
+  margin: 0 1rem 0 0;
+  border: 1px solid red;
+}
+
+span.timestamp {
+  padding: 1rem;
+  width: max-content;
+  float: left;
+  border: 1px solid green;
+}
+
+span.content {
+  padding: 1rem;
+  width: max-content;
+  float: left;
+  border: 1px solid yellow;
+}
+
+ul.no-bullets {
+  list-style-type: none; /* Remove bullets */
+  padding: 0; /* Remove padding */
+  margin: 0; /* Remove margins */
+}
