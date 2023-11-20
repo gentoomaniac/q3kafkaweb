@@ -1,5 +1,5 @@
 [project]
-name = "q3web"
+name = "q3webApi"
 description = "Read q3 events from kafka and visualise them"
 version = "0.0.1"
 authors = [
@@ -16,4 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-q3web = "q3web.main:cli"
+q3webApi = "q3webApi.main:cli"
+
+[tool.setuptools.packages.find]
+exclude = ["q3web"]

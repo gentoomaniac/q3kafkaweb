@@ -3,7 +3,7 @@ import sys
 
 import click
 
-import q3web.server as server
+import q3webApi.server as server
 
 log = logging.getLogger(__name__)
 

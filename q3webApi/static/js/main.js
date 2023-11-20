@@ -163,6 +163,8 @@ function chatEventToHTML(msg) {
   return html;
 }
 
+// TODO: add popup on player with player stats
+// TODO: turn this into DIVs and use a fade
 function killEventToHTML(msg) {
   var timestamp = new Date(msg.timestamp);
   var html =

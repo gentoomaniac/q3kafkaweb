@@ -12,7 +12,7 @@ from flask import Flask, render_template, request, url_for
 from flask_bootstrap import Bootstrap5
 from flask_socketio import SocketIO, emit
 
-from q3web.message_queue import MessageQueueReader
+from q3webApi.message_queue import MessageQueueReader
 
 log = logging.getLogger(__name__)
 

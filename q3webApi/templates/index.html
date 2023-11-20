@@ -3,8 +3,9 @@
 {% block head %}
 {{ super() }}
 <script type="text/javascript" src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
-<script src="{{url_for('.static', filename='js/toplists.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{url_for('.static', filename='js/stats.js')}}"></script>
+<!-- <script src="{{url_for('.static', filename='js/toplists.js')}}"></script> -->
 {% endblock %}
 
 {% block content %}
@@ -19,7 +20,7 @@
     </table>
 </div>
 <div class="content" id="toplist">
-    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+    <canvas id="myChart"></canvas>
 </div>
 {% endblock %}
 
