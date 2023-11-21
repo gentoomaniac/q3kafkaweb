@@ -41,9 +41,7 @@ function getPlayerByName(name) {
 }
 
 export function setupSocketIO() {
-  sio = io.connect(
-    new URL("/events", window.location.href.split('?')[0]).href
-  );
+  sio = io("/events");
   sio.on("connect", function () {
     console.log("Websocket connecting...");
   });

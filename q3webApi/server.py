@@ -92,7 +92,7 @@ def decorate_event(message):
 def _get_app(secret_key=str(uuid.uuid4())):
     app = Flask(__name__)
     app.secret_key = secret_key
-    return app, SocketIO(app), Bootstrap5(app)
+    return app, SocketIO(app, cors_allowed_origins='*'), Bootstrap5(app)
 
 
 app, socketio, bootstrap = _get_app(os.getenv('APP_SECRET', str(uuid.uuid4())))
