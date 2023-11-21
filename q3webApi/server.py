@@ -41,6 +41,7 @@ def _consumer_thread():
 
         _process_messages(data)
         consumer.commit()
+        time.sleep(0.5)
 
 
 def _process_messages(data: dict):
