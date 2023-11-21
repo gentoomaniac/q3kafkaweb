@@ -99,13 +99,6 @@ def _get_app(secret_key=str(uuid.uuid4())):
 app, socketio, bootstrap = _get_app(os.getenv('APP_SECRET', str(uuid.uuid4())))
 
 
-@app.route('/')
-def index():
-    """ Serve the index page
-    """
-    return render_template('index.html',)
-
-
 @socketio.on('subscribe', namespace='/events')
 def subscribe(game_id):
     """ Handles a request from the web app to retrieve events for a match
