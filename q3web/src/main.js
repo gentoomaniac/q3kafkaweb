@@ -180,9 +180,9 @@ export function KillEvents() {
     event.event === 'Kill'
   );
   const listItems = kills.map(k =>
-    <li key={k.timestamp}>
+    <li className="alert alert-danger" key={k.timestamp}>
       <div className="row">
-      <div className="block">
+      <div className="block ">
           <img src={k.weapon_icon} alt={k.weapon_name} />
           <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
           <span className="content">{colorParseText(getKillMessage(k))}</span>

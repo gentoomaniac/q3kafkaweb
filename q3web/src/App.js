@@ -1,5 +1,11 @@
 import './App.css';
 import { useEffect } from 'react';
+
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 import { setupSocketIO, disconnectSocketIO, KillEvents } from './main';
 
 function App() {
@@ -12,12 +18,13 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+      <button onClick={() => setupSocketIO()}>connect</button>
         <div className="Scroll-box" id="kill_div">
           <KillEvents />
         </div>
         <div className="Scroll-box" id="chat_div"></div>
         <div className="content" id="toplist">
-          <canvas id="myChart"></canvas>
+
         </div>
       </header>
     </div>

@@ -12,7 +12,6 @@ code {
     monospace;
 }
 
-
 .Scroll-box {
   height: 400px;
   width: 100%;
@@ -20,10 +19,13 @@ code {
   scroll;
 }
 
+li {
+  margin: 10px;
+  background-color: #2a2c2f;
+}
+
 .block {
   overflow: hidden;
-  padding: 1rem;
-  margin: 0 0 1rem 0;
   border: 1px solid orange;
  }
 
