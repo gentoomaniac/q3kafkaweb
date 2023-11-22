@@ -61,35 +61,6 @@ def _process_messages(data: dict):
                     # TODO: how to unsubscribe a given topic?
 
 
-def _get_weapon_icon_mapping(key):
-    return {
-        'MOD_GAUNTLET': url_for('static', filename='img/iconw_gauntlet_32.png'),
-        'MOD_MACHINEGUN': url_for('static', filename='img/iconw_machinegun_32.png'),
-        'MOD_SHOTGUN': url_for('static', filename='img/iconw_shotgun_32.png'),
-        'MOD_GRENADE': url_for('static', filename='img/iconw_grenade_32.png'),
-        'MOD_LIGHTNING': url_for('static', filename='img/iconw_lightning_32.png'),
-        'MOD_PLASMA': url_for('static', filename='img/iconw_plasma_32.png'),
-        'MOD_PLASMA_SPLASH': url_for('static', filename='img/iconw_plasma_32.png'),
-        'MOD_RAILGUN': url_for('static', filename='img/iconw_railgun_32.png'),
-        'MOD_ROCKET': url_for('static', filename='img/iconw_rocket_32.png'),
-        'MOD_ROCKET_SPLASH': url_for('static', filename='img/iconw_rocket_32.png'),
-        'MOD_BFG': url_for('static', filename='img/iconw_bfg_32.png'),
-        'MOD_TRIGGER_HURT': url_for('static', filename='img/world_kill_32.png'),
-        'MOD_FALLING': url_for('static', filename='img/world_kill_32.png'),
-        'MOD_TELEFRAG': url_for('static', filename='img/teleporter_32.png')
-    }.get(key, url_for('static', filename='img/no_icon_32.png'))
-
-
-def decorate_event(message):
-    """ Takes the plain event and adds URLs etc for retrieving the icons for a given event
-    """
-    decorated = message.copy()
-
-    if 'weapon_name' in message:
-        decorated['weapon_icon'] = _get_weapon_icon_mapping(message['weapon_name'])
-    return decorated
-
-
 def _get_app(secret_key=str(uuid.uuid4())):
     app = Flask(__name__)
     app.secret_key = secret_key
@@ -116,7 +87,7 @@ def subscribe(game_id):
         try:
             event = next(event_queue)
             if event:
-                emit('event', json.dumps(decorate_event(event)))
+                emit('event', json.dumps(event))
                 if event['event'] == 'GameEnded':
                     break
         except StopIteration:
