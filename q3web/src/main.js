@@ -206,9 +206,11 @@ export function KillEvents() {
     <li key={index}>
       <div className="card w-100">
       <div className="card-body">
-        <img src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
-        <h5 className="card-title">{new Date(k.timestamp).toLocaleTimeString()}</h5>
-        <p className="card-text"><GetKillMessage msg={k} /></p>
+        <p className="card-text">
+          <img className="card-icon" src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
+          {new Date(k.timestamp).toLocaleTimeString()}
+          <GetKillMessage msg={k} />
+        </p>
       </div>
     </div>
 
