@@ -1,13 +1,12 @@
-
+import React, { useState } from 'react';
 import { io } from 'socket.io-client';
 
 var session_id;
 var GameState = { 'players': {}, 'weapons': {}};
-var Events = [
-  {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_railgun_32.png'},
-  {'timestamp': '2019-03-31T10:35:07.853902', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_shotgun_32.png'},
-  {'timestamp': '2019-03-31T10:35:07.853903', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1', 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN', 'weapon_icon': '/img/iconw_rocket_32.png'}
-];
+
+var Events = [];
+var forceUpdateKillEvents;
+
 var sio = null;
 
 const WORLD_ID = "1022"
@@ -105,6 +104,7 @@ function onKillEvent(msg) {
   // {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1',
   // 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN'}
   console.log(msg);
+  Events.push(msg);
 
   if ( !(msg.weapon_id in GameState.weapons)){
     GameState.weapons[msg.weapon_id] = getNewWeaponDict(msg.weapon_name);
@@ -117,6 +117,7 @@ function onKillEvent(msg) {
   } else {
     GameState.players[msg.target_id].deaths++;
   }
+  forceUpdateKillEvents();
 }
 
 function onClinetConnect(msg) {
@@ -174,11 +175,15 @@ function chatEventToHTML(msg) {
 
 // TODO: add popup on player with player stats
 export function KillEvents() {
+  const [, updateState] = React.useState();
+  forceUpdateKillEvents = React.useCallback(() => updateState({}), []);
+
   const kills = Events.filter(event =>
     event.event === 'Kill'
   );
-  const listItems = kills.map(k =>
-    <li className="alert alert-danger" key={k.timestamp}>
+  const listItems = kills.toReversed().map((k, index) =>
+    <li className="alert alert-danger" key={index}>
+      {console.log(JSON.stringify(k))}
       <div className="row">
       <div className="block ">
           <img src={k.weapon_icon} alt={k.weapon_name} />
