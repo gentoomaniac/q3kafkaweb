@@ -203,14 +203,15 @@ export function KillEvents() {
     event.event === 'Kill'
   );
   const listItems = kills.toReversed().map((k, index) =>
-    <li className="alert alert-danger" key={index}>
-      <div className="row">
-      <div className="block ">
-          <img src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
-          <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
-          <span className="content"><GetKillMessage msg={k} /></span>
+    <li key={index}>
+      <div className="card w-100">
+      <div className="card-body">
+        <img src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
+        <h5 className="card-title">{new Date(k.timestamp).toLocaleTimeString()}</h5>
+        <p className="card-text"><GetKillMessage msg={k} /></p>
       </div>
-      </div>
+    </div>
+
     </li>
   );
   return <ul className="no-bullets">{listItems}</ul>;

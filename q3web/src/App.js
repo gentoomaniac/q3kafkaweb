@@ -18,7 +18,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-      <button onClick={() => setupSocketIO()}>connect</button>
+        <div>
+          <button className="btn btn-light" onClick={() => setupSocketIO()}>connect</button>
+        </div>
         <div className="Scroll-box" id="kill_div">
           <KillEvents />
         </div>
