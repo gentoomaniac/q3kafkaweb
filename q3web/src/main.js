@@ -11,37 +11,36 @@ var sio = null;
 
 const WORLD_ID = "1022"
 const COLORS = {
-  "^0": "black",
-  "^1": "red",
-  "^2": "green",
-  "^3": "yellow",
-  "^4": "blue",
-  "^5": "cyan",
-  "^6": "pink",
-  "^7": "white",
-  "^8": "orange",
+  "0": "black",
+  "1": "red",
+  "2": "green",
+  "3": "yellow",
+  "4": "blue",
+  "5": "cyan",
+  "6": "pink",
+  "7": "white",
+  "8": "orange"
 };
 
-const WeaponIconsValues = {
-  MOD_GAUNTLET: 'img/iconw_gauntlet_32.png',
-  MOD_MACHINEGUN: 'img/iconw_machinegun_32.png',
-  MOD_SHOTGUN: 'img/iconw_shotgun_32.png',
-  MOD_GRENADE: 'img/iconw_grenade_32.png',
-  MOD_LIGHTNING: 'img/iconw_lightning_32.png',
-  MOD_PLASMA: 'img/iconw_plasma_32.png',
-  MOD_PLASMA_SPLASH: 'img/iconw_plasma_32.png',
-  MOD_RAILGUN: 'img/iconw_railgun_32.png',
-  MOD_ROCKET: 'img/iconw_rocket_32.png',
-  MOD_ROCKET_SPLASH: 'img/iconw_rocket_32.png',
-  MOD_BFG: 'img/iconw_bfg_32.png',
-  MOD_TRIGGER_HURT: 'img/world_kill_32.png',
-  MOD_FALLING: 'img/world_kill_32.png',
-  MOD_TELEFRAG: 'img/teleporter_32.png',
-  NO_ICON: 'img/no_icon_32.png'
+const WeaponIcons = {
+  'MOD_GAUNTLET': 'img/iconw_gauntlet_32.png',
+  'MOD_MACHINEGUN': 'img/iconw_machinegun_32.png',
+  'MOD_SHOTGUN': 'img/iconw_shotgun_32.png',
+  'MOD_GRENADE': 'img/iconw_grenade_32.png',
+  'MOD_LIGHTNING': 'img/iconw_lightning_32.png',
+  'MOD_PLASMA': 'img/iconw_plasma_32.png',
+  'MOD_PLASMA_SPLASH': 'img/iconw_plasma_32.png',
+  'MOD_RAILGUN': 'img/iconw_railgun_32.png',
+  'MOD_ROCKET': 'img/iconw_rocket_32.png',
+  'MOD_ROCKET_SPLASH': 'img/iconw_rocket_32.png',
+  'MOD_BFG': 'img/iconw_bfg_32.png',
+  'MOD_TRIGGER_HURT': 'img/world_kill_32.png',
+  'MOD_FALLING': 'img/world_kill_32.png',
+  'MOD_TELEFRAG': 'img/teleporter_32.png',
+  'NO_ICON': 'img/no_icon_32.png'
 }
-const WeaponIcons = new Map(Object.entries(WeaponIconsValues));
 function getWeaponIcon(key) {
-  return WeaponIcons.has(key) ? WeaponIcons.get(key) : WeaponIcons.NO_ICON;
+  return key in WeaponIcons ? WeaponIcons[key] : WeaponIcons['NO_ICON'];
 }
 
 
@@ -162,38 +161,38 @@ function onChatEvent(msg) {
   //$('#chat_table tbody').prepend(chatEventToHTML(msg));
 }
 
-function chatEventToHTML(msg) {
-  var timestamp = new Date(msg.timestamp);
-  var html = '<tr><td className="fit">' + timestamp.toLocaleTimeString() + "</td>";
+// function chatEventToHTML(msg) {
+//   var timestamp = new Date(msg.timestamp);
+//   var html = '<tr><td className="fit">' + timestamp.toLocaleTimeString() + "</td>";
 
-  if (msg.event === "tell") {
-    html +=
-      '<td className="fit">' +
-      colorParseText(msg.actor_name) +
-      '&nbsp;<i className="fas fa-arrow-right"></i> ' +
-      colorParseText(msg.target_name) +
-      '<i className="fas fa-greater-than"></i></td>';
-  } else if (msg.event === "say") {
-    html +=
-      '<td className="fit">' +
-      colorParseText(msg.actor_name) +
-      '&nbsp;<i className="fas fa-greater-than"></i></td>';
-  } else if (msg.event === "sayteam") {
-    if (msg.team)
-      var team_icon = '<img src="static/img/team' + msg.team + '_32.png">';
-    else var team_icon = '<i className="fas fa-video"></i>';
-    // {"timestamp":"2019-03-31T23:33:03.210875","event":"sayteam","actor_name":"Visor","msg":"I am the team leader"}
-    html +=
-      '<td className="fit">' +
-      team_icon +
-      "&nbsp;" +
-      colorParseText(msg.actor_name) +
-      '&nbsp;<i className="fas fa-greater-than"></i></td>';
-  }
+//   if (msg.event === "tell") {
+//     html +=
+//       '<td className="fit">' +
+//       ColoredText(msg.actor_name) +
+//       '&nbsp;<i className="fas fa-arrow-right"></i> ' +
+//       ColoredText(msg.target_name) +
+//       '<i className="fas fa-greater-than"></i></td>';
+//   } else if (msg.event === "say") {
+//     html +=
+//       '<td className="fit">' +
+//       ColoredText(msg.actor_name) +
+//       '&nbsp;<i className="fas fa-greater-than"></i></td>';
+//   } else if (msg.event === "sayteam") {
+//     if (msg.team)
+//       var team_icon = '<img src="static/img/team' + msg.team + '_32.png">';
+//     else var team_icon = '<i className="fas fa-video"></i>';
+//     // {"timestamp":"2019-03-31T23:33:03.210875","event":"sayteam","actor_name":"Visor","msg":"I am the team leader"}
+//     html +=
+//       '<td className="fit">' +
+//       team_icon +
+//       "&nbsp;" +
+//       ColoredText(msg.actor_name) +
+//       '&nbsp;<i className="fas fa-greater-than"></i></td>';
+//   }
 
-  html += "<td>" + colorParseText(msg.msg) + "</td></tr>";
-  return html;
-}
+//   html += "<td>" + ColoredText(msg.msg) + "</td></tr>";
+//   return html;
+// }
 
 // TODO: add popup on player with player stats
 export function KillEvents() {
@@ -209,7 +208,7 @@ export function KillEvents() {
       <div className="block ">
           <img src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
           <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
-          <span className="content">{colorParseText(getKillMessage(k))}</span>
+          <span className="content"><GetKillMessage msg={k} /></span>
       </div>
       </div>
     </li>
@@ -217,45 +216,40 @@ export function KillEvents() {
   return <ul className="no-bullets">{listItems}</ul>;
 }
 
-function getKillMessage(msg) {
-  var text;
+function GetKillMessage(props) {
+  const msg = props.msg
   if (msg.actor_name === "<world>" && msg.weapon_name === "MOD_FALLING") {
-    text = colorParseText(msg.target_name) + " cratered";
-  } else if (
-    msg.actor_name === "<world>" &&
-    msg.weapon_name === "MOD_TRIGGER_HURT"
-  ) {
-    text = colorParseText(msg.target_name) + " was in the wrong place";
+      return <span><ColoredText text={msg.target_name} /> cratered</span>;
+  } else if (msg.actor_name === "<world>" && msg.weapon_name === "MOD_TRIGGER_HURT") {
+      return <span><ColoredText text={msg.target_name} /> was in the wrong place</span>;
   } else if (msg.actor_name === msg.target_name) {
-    text = colorParseText(msg.target_name) + " blew itself up";
-  } else {
-    text =
-      colorParseText(msg.target_name) + " got fragged by " + msg.actor_name;
+      return <span><ColoredText text={msg.target_name} /> blew itself up</span>;
   }
 
-  return text;
+  return <span><ColoredText text={msg.target_name} /> got fragged by <ColoredText text={msg.actor_name} /></span>;
 }
 
-function colorParseText(msg) {
-  //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/split
-  var formatted = "";
-  var is_open = false;
+function ColoredText(props) {
+  const splits = props.text.split("^");
+  if (splits[0] === '')
+    splits.shift();
 
-  const splits = msg.split(/(\^\d)/);
-
-  splits.forEach(function (item, index) {
-    if (item in COLORS) {
-      if (is_open) {
-        formatted += "</span>";
-        is_open = false;
-      }
-      formatted += '<span style="color: ' + COLORS[item] + ';">';
-      is_open = true;
-    } else {
-      formatted += item;
-    }
+  const colorFragments = splits.map(item => {
+      // if text fragment starts with a digit it is color formatted
+      // TODO: There's an edgecase where a text started with a number.
+      // The split removed the ^. The empty first element would indicate
+      // if it was a plain character or a color format digit
+      if (/^\d+$/.test(item[0]))
+        return <ColorSpan item={item.substring(1)} color={item[0]} />;
+      else
+        return <span>{item}</span>
   });
-  if (is_open) formatted += "</span>";
+  return colorFragments;
+}
 
-  return formatted;
+function ColorSpan(props) {
+  if (props.color in COLORS)
+    return <span className={COLORS[props.color]}>{props.item}</span>;
+  else
+    return <span>{props.item}</span>;
 }

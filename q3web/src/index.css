@@ -56,3 +56,31 @@ ul.no-bullets {
   padding: 0; /* Remove padding */
   margin: 0; /* Remove margins */
 }
+
+span.black {
+  color: black;
+}
+span.red {
+  color: red;
+}
+span.green {
+  color: green;
+}
+span.yellow {
+  color: yellow;
+}
+span.blue {
+  color: blue;
+}
+span.cyan {
+  color: cyan;
+}
+span.pink {
+  color: pink;
+}
+span.white {
+  color: white;
+}
+span.orange {
+  color: orange;
+}
