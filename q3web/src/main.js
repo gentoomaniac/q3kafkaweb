@@ -69,7 +69,6 @@ export function setupSocketIO() {
   });
   sio.on("event", function (msg) {
     msg = JSON.parse(msg);
-    // console.log(msg)
     eventHandler(msg);
   });
   sio.on("connected", function (msg) {
@@ -77,6 +76,7 @@ export function setupSocketIO() {
     console.log("Websocket connected");
     var url = new URL(window.location.href);
     var match_id = url.searchParams.get("match_id");
+    console.log("Requesting game: " + match_id);
     sio.emit("subscribe", match_id);
   });
   sio.on("disconnect", function () {
@@ -127,7 +127,6 @@ function onKillEvent(msg) {
   // {'timestamp': '2019-03-31T10:35:07.853901', 'event': 'Kill', 'actor_id': '3', 'target_id': '2', 'weapon_id': '1',
   // 'actor_name': 'Bitterman', 'target_name': 'Hunter', 'weapon_name': 'MOD_SHOTGUN'}
   console.log(msg);
-  Events.push(msg);
 
   if ( !(msg.weapon_id in GameState.weapons)){
     GameState.weapons[msg.weapon_id] = getNewWeaponDict(msg.weapon_name);
