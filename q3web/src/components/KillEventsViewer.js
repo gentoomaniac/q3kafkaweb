@@ -32,7 +32,7 @@ const KillEventsViewer = (props) => {
   );
   return (
     <>
-      <div className="Scroll-box" id="kill_div">
+      <div className="Scroll-box" id="killViewer">
         <ul className="no-bullets">{listItems}</ul>
       </div>
     </>

@@ -8,13 +8,14 @@ import { Events } from './main';
 import Layout from "./components/Layout/Layout";
 import ConnectPanel from "./components/ConnectPanel";
 import KillEventsViewer from "./components/KillEventsViewer";
+import ChatViewer from "./components/ChatViewer";
 
 function App() {
   return (
     <Layout>
         <ConnectPanel/>
         <KillEventsViewer events={Events} />
-        <div className="Scroll-box" id="chat_div"></div>
+        <ChatViewer events={Events} />
         <div className="content" id="toplist">
 
         </div>
