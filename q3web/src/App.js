@@ -1,35 +1,24 @@
 import './App.css';
-import { useEffect } from 'react';
 
-// Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
-// Bootstrap Bundle JS
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
-import { setupSocketIO, disconnectSocketIO, KillEvents } from './main';
+import { Events } from './main';
+
+import Layout from "./components/Layout/Layout";
+import ConnectPanel from "./components/ConnectPanel";
+import KillEventsViewer from "./components/KillEventsViewer";
 
 function App() {
-  useEffect(() => {
-    //setupSocketIO();
-    return () => {
-      //disconnectSocketIO();
-    };
-  },[]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <div>
-          <button className="btn btn-light" onClick={() => setupSocketIO()}>connect</button>
-        </div>
-        <div className="Scroll-box" id="kill_div">
-          <KillEvents />
-        </div>
+    <Layout>
+        <ConnectPanel/>
+        <KillEventsViewer events={Events} />
         <div className="Scroll-box" id="chat_div"></div>
         <div className="content" id="toplist">
 
         </div>
-      </header>
-    </div>
+    </Layout>
   );
 }
 

@@ -1,47 +1,17 @@
 import React from 'react';
 import { io } from 'socket.io-client';
 
+import {KillEventsViewer, UpdateKillEvents} from "./components/KillEventsViewer";
+
 var session_id;
 var GameState = { 'players': {}, 'weapons': {}};
 
-var Events = [];
-var forceUpdateKillEvents;
+export let Events = [];
+
 
 var sio = null;
 
 const WORLD_ID = "1022"
-const COLORS = {
-  "0": "black",
-  "1": "red",
-  "2": "green",
-  "3": "yellow",
-  "4": "blue",
-  "5": "cyan",
-  "6": "pink",
-  "7": "white",
-  "8": "orange"
-};
-
-const WeaponIcons = {
-  'MOD_GAUNTLET': 'img/iconw_gauntlet_32.png',
-  'MOD_MACHINEGUN': 'img/iconw_machinegun_32.png',
-  'MOD_SHOTGUN': 'img/iconw_shotgun_32.png',
-  'MOD_GRENADE': 'img/iconw_grenade_32.png',
-  'MOD_LIGHTNING': 'img/iconw_lightning_32.png',
-  'MOD_PLASMA': 'img/iconw_plasma_32.png',
-  'MOD_PLASMA_SPLASH': 'img/iconw_plasma_32.png',
-  'MOD_RAILGUN': 'img/iconw_railgun_32.png',
-  'MOD_ROCKET': 'img/iconw_rocket_32.png',
-  'MOD_ROCKET_SPLASH': 'img/iconw_rocket_32.png',
-  'MOD_BFG': 'img/iconw_bfg_32.png',
-  'MOD_TRIGGER_HURT': 'img/world_kill_32.png',
-  'MOD_FALLING': 'img/world_kill_32.png',
-  'MOD_TELEFRAG': 'img/teleporter_32.png',
-  'NO_ICON': 'img/no_icon_32.png'
-}
-function getWeaponIcon(key) {
-  return key in WeaponIcons ? WeaponIcons[key] : WeaponIcons['NO_ICON'];
-}
 
 
 function getNewWeaponDict(name){
@@ -138,7 +108,7 @@ function onKillEvent(msg) {
   } else {
     GameState.players[msg.target_id].deaths++;
   }
-  forceUpdateKillEvents();
+  UpdateKillEvents();
 }
 
 function onClinetConnect(msg) {
@@ -194,65 +164,3 @@ function onChatEvent(msg) {
 //   return html;
 // }
 
-// TODO: add popup on player with player stats
-export function KillEvents() {
-  const [, updateState] = React.useState();
-  forceUpdateKillEvents = React.useCallback(() => updateState({}), []);
-
-  const kills = Events.filter(event =>
-    event.event === 'Kill'
-  );
-  const listItems = kills.toReversed().map((k, index) =>
-    <li key={index}>
-      <div className="card w-100">
-      <div className="card-body">
-        <p className="card-text">
-          <img className="card-icon" src={getWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
-          {new Date(k.timestamp).toLocaleTimeString()}
-          <GetKillMessage msg={k} />
-        </p>
-      </div>
-    </div>
-
-    </li>
-  );
-  return <ul className="no-bullets">{listItems}</ul>;
-}
-
-function GetKillMessage(props) {
-  const msg = props.msg
-  if (msg.actor_name === "<world>" && msg.weapon_name === "MOD_FALLING") {
-      return <span><ColoredText text={msg.target_name} /> cratered</span>;
-  } else if (msg.actor_name === "<world>" && msg.weapon_name === "MOD_TRIGGER_HURT") {
-      return <span><ColoredText text={msg.target_name} /> was in the wrong place</span>;
-  } else if (msg.actor_name === msg.target_name) {
-      return <span><ColoredText text={msg.target_name} /> blew itself up</span>;
-  }
-
-  return <span><ColoredText text={msg.target_name} /> got fragged by <ColoredText text={msg.actor_name} /></span>;
-}
-
-function ColoredText(props) {
-  const splits = props.text.split("^");
-  if (splits[0] === '')
-    splits.shift();
-
-  const colorFragments = splits.map(item => {
-      // if text fragment starts with a digit it is color formatted
-      // TODO: There's an edgecase where a text started with a number.
-      // The split removed the ^. The empty first element would indicate
-      // if it was a plain character or a color format digit
-      if (/^\d+$/.test(item[0]))
-        return <ColorSpan item={item.substring(1)} color={item[0]} />;
-      else
-        return <span>{item}</span>
-  });
-  return colorFragments;
-}
-
-function ColorSpan(props) {
-  if (props.color in COLORS)
-    return <span className={COLORS[props.color]}>{props.item}</span>;
-  else
-    return <span>{props.item}</span>;
-}
