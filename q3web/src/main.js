@@ -1,9 +1,11 @@
+import React from 'react';
+
 import { io } from 'socket.io-client';
 
 import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
+import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
 
-var session_id;
 var GameState = { 'players': {}, 'weapons': {}};
 
 export let Events = [];
@@ -41,7 +43,6 @@ export function setupSocketIO() {
     eventHandler(msg);
   });
   sio.on("connected", function (msg) {
-    session_id = msg.session_id;
     console.log("Websocket connected");
     var url = new URL(window.location.href);
     var match_id = url.searchParams.get("match_id");
@@ -80,9 +81,14 @@ function eventHandler(msg) {
       onKillEvent(msg);
       break;
 
+    case "broadcast":
     case "say":
     case "sayteam":
     case "tell":
+      onChatEvent(msg);
+      break;
+
+    case "Exit":
       onChatEvent(msg);
       break;
 
@@ -126,6 +132,7 @@ function onItem(msg) {
 function onChatEvent(msg) {
   // {"timestamp":"2019-03-31T23:09:23.210974","event":"tell","actor_name":"Visor","target_name":"Major","msg":"Ms. Major, Sir follow me"}
   //$('#chat_table tbody').prepend(chatEventToHTML(msg));
-  console.log(msg);
+
   UpdateChatEvents();
 }
+

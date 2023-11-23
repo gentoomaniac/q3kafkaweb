@@ -9,13 +9,20 @@ import Layout from "./components/Layout/Layout";
 import ConnectPanel from "./components/ConnectPanel";
 import KillEventsViewer from "./components/KillEventsViewer";
 import ChatViewer from "./components/ChatViewer";
+import GameEndedPopup from "./components/GameEndedPopup";
 
 function App() {
   return (
     <Layout>
-        <ConnectPanel/>
-        <KillEventsViewer events={Events} />
-        <ChatViewer events={Events} />
+        <div>
+          <ConnectPanel/>
+        </div>
+        <div>
+          <KillEventsViewer events={Events} />
+        </div>
+        <div>
+          <ChatViewer events={Events} />
+        </div>
         <div className="content" id="toplist">
 
         </div>
