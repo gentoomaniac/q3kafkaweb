@@ -1,5 +1,6 @@
 // TODO: add popup on player with player stats
 import React from 'react';
+import './KillEventsViewer.css';
 
 import KillMessage from "./KillMessage";
 import GetWeaponIcon from "./WeaponIcons";
@@ -19,8 +20,10 @@ const KillEventsViewer = (props) => {
       <div className="card-body">
         <p className="card-text">
           <img className="card-icon" src={GetWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
-          {new Date(k.timestamp).toLocaleTimeString()}
-          <KillMessage msg={k} />
+          <p>
+            <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
+            <KillMessage msg={k} />
+          </p>
         </p>
       </div>
     </div>

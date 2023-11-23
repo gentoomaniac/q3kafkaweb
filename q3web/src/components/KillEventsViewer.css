@@ -1,0 +1,14 @@
+.card-icon {
+  float: left;
+  margin: 0 15px 0 0px;
+}
+
+.card-text p {
+  position: absolute;
+  top: 50%;
+  transform: translate(15%,-50%);
+}
+
+.timestamp {
+  margin: 0 15px 0 0px;
+}
