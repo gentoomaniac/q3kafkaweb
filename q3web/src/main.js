@@ -68,11 +68,11 @@ function eventHandler(msg) {
       break;
 
     case "ClientConnect":
-      onClinetConnect(msg);
+      onClientConnect(msg);
       break;
 
     case "ClientDisconnect":
-      onClinetConnect(msg);
+      onClientDisconnect(msg);
       break;
 
     case "ClientUserinfoChanged":
@@ -127,9 +127,15 @@ function onKillEvent(msg) {
   //UpdateWeaponKillsPie();
 }
 
-function onClinetConnect(msg) {
+function onClientConnect(msg) {
   // {"timestamp": "2019-03-31T12:11:44.846638", "event": "ClientConnect", "client_id": "0"}
   GameState.players[msg.client_id] = getNewPlayerDict();
+}
+
+function onClientDisconnect(msg) {
+  // {"timestamp": "2019-03-31T12:11:44.846638", "event": "ClientConnect", "client_id": "0"}
+  // TODO: This should become more explicit to keep track of join and leave times
+  GameState.players[msg.client_id] = {...GameState.players[msg.client_id], ...msg};
 }
 
 function onClientUserinfoChanged(msg) {
