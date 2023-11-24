@@ -23,7 +23,7 @@ const ChatViewer = (props) => {
       <div className="card-body">
         <p className="card-text">
         <img className="card-icon" src="" alt={k.weapon_name} />
-          <ChatMessage event={k} />
+          <ChatMessage event={k} gameState={props.gameState}/>
         </p>
       </div>
     </div>

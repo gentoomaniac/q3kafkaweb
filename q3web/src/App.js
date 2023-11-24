@@ -11,18 +11,20 @@ import ConnectPanel from "./components/ConnectPanel";
 import KillEventsViewer from "./components/KillEventsViewer";
 import ChatViewer from "./components/ChatViewer";
 import GameEndedPopup from "./components/GameEndedPopup";
+import MapImage from "./components/MapImage";
 
 function App() {
   return (
     <Layout>
         <div className='transparent'>
           <ConnectPanel/>
+          <MapImage />
         </div>
         <div className='transparent'>
           <KillEventsViewer events={Events} />
         </div>
         <div className='transparent'>
-          <ChatViewer events={Events} />
+          <ChatViewer events={Events} gameState={GameState} />
         </div>
         <div className="content" id="toplist">
           {/* <SamplePieChart gameState={GameState} /> */}

@@ -34,10 +34,15 @@ const ChatMessage = (props) => {
       );
 
     case "sayteam":
+      const players = props.gameState.players
+      var player
+      Object.keys(players).forEach(x => player = players[x].name === event.actor_name ? players[x]: player);
+      let teamName = "team_" + player.team;
+      let teamIcon = "/img/team_" + player.team + ".png";
       return (
         <>
           <span className="timestamp">{new Date(event.timestamp).toLocaleTimeString()}</span>
-          <FontAwesomeIcon icon={faUserGroup} /> <ColoredText text={event.actor_name} />: <ColoredText text={event.msg} />
+          <img className="team-icon" src={teamIcon} alt={teamName} /> <ColoredText text={event.actor_name} />: <ColoredText text={event.msg} />
         </>
       );
 

@@ -6,6 +6,7 @@ import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
 import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
 import {UpdateWeaponKillsPie} from "./components/WeaponKillsPie";
+import {UpdateMapImage, SetMap  } from "./components/MapImage";
 
 export let GameState = { 'players': {}, 'weapons': {}};
 
@@ -62,6 +63,10 @@ export function disconnectSocketIO() {
 function eventHandler(msg) {
   Events.push(msg);
   switch (msg.event) {
+    case "loaded map":
+      onLoadedMap(msg);
+      break;
+
     case "ClientConnect":
       onClinetConnect(msg);
       break;
@@ -96,6 +101,12 @@ function eventHandler(msg) {
     default:
       console.log("Unhandled event: " + JSON.stringify(msg));
   }
+}
+
+function onLoadedMap(msg) {
+  // {"timestamp":"2023-11-24T17:16:16.920181","event":"loaded map","map":"q3dm17","match_id":"0dff2517-cd1f-4e88-9315-56234cead1e0"}
+  SetMap(msg.map);
+  UpdateMapImage();
 }
 
 function onKillEvent(msg) {
@@ -134,7 +145,6 @@ function onItem(msg) {
 function onChatEvent(msg) {
   // {"timestamp":"2019-03-31T23:09:23.210974","event":"tell","actor_name":"Visor","target_name":"Major","msg":"Ms. Major, Sir follow me"}
   //$('#chat_table tbody').prepend(chatEventToHTML(msg));
-
   UpdateChatEvents();
 }
 
