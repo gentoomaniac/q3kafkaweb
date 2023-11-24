@@ -16,15 +16,15 @@ const KillEventsViewer = (props) => {
   );
   const listItems = kills.toReversed().map((k, index) =>
     <li key={index}>
-      <div className="card w-100">
+      <div className="card w-100 translucent">
       <div className="card-body">
-        <p className="card-text">
+        <div className="card-text">
           <img className="card-icon" src={GetWeaponIcon(k.weapon_name)} alt={k.weapon_name} />
           <p>
             <span className="timestamp">{new Date(k.timestamp).toLocaleTimeString()}</span>
             <KillMessage msg={k} />
           </p>
-        </p>
+        </div>
       </div>
     </div>
 
@@ -32,7 +32,7 @@ const KillEventsViewer = (props) => {
   );
   return (
     <>
-      <div className="Scroll-box" id="killViewer">
+      <div className="Scroll-box transparent" id="killViewer">
         <ul className="no-bullets">{listItems}</ul>
       </div>
     </>

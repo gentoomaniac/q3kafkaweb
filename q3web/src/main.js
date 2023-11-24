@@ -5,8 +5,9 @@ import { io } from 'socket.io-client';
 import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
 import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
+import {UpdateWeaponKillsPie} from "./components/WeaponKillsPie";
 
-var GameState = { 'players': {}, 'weapons': {}};
+export let GameState = { 'players': {}, 'weapons': {}};
 
 export let Events = [];
 
@@ -60,7 +61,6 @@ export function disconnectSocketIO() {
 
 function eventHandler(msg) {
   Events.push(msg);
-  console.log(msg);
   switch (msg.event) {
     case "ClientConnect":
       onClinetConnect(msg);
@@ -113,6 +113,7 @@ function onKillEvent(msg) {
     GameState.players[msg.target_id].deaths++;
   }
   UpdateKillEvents();
+  //UpdateWeaponKillsPie();
 }
 
 function onClinetConnect(msg) {

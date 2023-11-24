@@ -23,12 +23,8 @@ code {
     monospace;
 }
 
-#root {
-  height: 100%;
-  background-color: rgb(255, 255, 255, 0);
-}
+
 .layout {
-  background-color: rgb(255, 255, 255, 0);
   border: 1px solid red;
 }
 
@@ -75,4 +71,12 @@ span.white {
 }
 span.orange {
   color: orange;
+}
+
+.transparent {
+  background: rgba(255, 255, 255, 0) !important;
+}
+
+.translucent {
+  background: rgba(255, 255, 255, .5) !important;
 }

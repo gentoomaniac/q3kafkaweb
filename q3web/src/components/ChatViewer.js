@@ -18,10 +18,10 @@ const ChatViewer = (props) => {
      event.event === 'Exit')
   );
   const listItems = kills.toReversed().map((k, index) =>
-    <li key={index} className="translucent">
+    <li key={index}>
       <div className="card w-100 translucent">
-      <div className="card-body translucent">
-        <p className="card-text translucent">
+      <div className="card-body">
+        <p className="card-text">
         <img className="card-icon" src="" alt={k.weapon_name} />
           <ChatMessage event={k} />
         </p>

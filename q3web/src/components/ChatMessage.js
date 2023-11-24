@@ -45,7 +45,7 @@ const ChatMessage = (props) => {
       return (
         <>
           <span className="timestamp">{new Date(event.timestamp).toLocaleTimeString()}</span>
-          <FontAwesomeIcon icon={faEnvelope} /> <ColoredText text={event.actor_name} /> <FontAwesomeIcon icon={faArrowRight} /> <ColoredText text={event.actor_name} />: <ColoredText text={event.msg} />
+          <FontAwesomeIcon icon={faEnvelope} /> <ColoredText text={event.actor_name} /> <FontAwesomeIcon icon={faArrowRight} /> <ColoredText text={event.target_name} />: <ColoredText text={event.msg} />
         </>
       );
 
