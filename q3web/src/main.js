@@ -60,6 +60,7 @@ export function disconnectSocketIO() {
 
 function eventHandler(msg) {
   Events.push(msg);
+  console.log(msg);
   switch (msg.event) {
     case "ClientConnect":
       onClinetConnect(msg);

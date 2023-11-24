@@ -8,9 +8,15 @@ import ColoredText from "./ColoredText";
 
 const ChatMessage = (props) => {
   const event = props.event;
-  console.log(event)
   switch (event.event) {
     case "broadcast":
+      return (
+        <>
+          <span className="timestamp">{new Date(event.timestamp).toLocaleTimeString()}</span>
+          <FontAwesomeIcon icon={faBullhorn} />: <ColoredText text={event.broadcast_message} />
+        </>
+      );
+
     case "Exit":
       return (
         <>

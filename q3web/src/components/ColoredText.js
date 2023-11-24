@@ -3,6 +3,8 @@ import React from 'react';
 import ColorSpan from "./ColorSpan";
 
 const ColoredText = (props) =>{
+  if (!props.text)
+    return
   const splits = props.text.split("^");
   if (splits[0] === '')
     splits.shift();

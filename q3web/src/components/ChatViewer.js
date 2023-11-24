@@ -11,13 +11,17 @@ const ChatViewer = (props) => {
   UpdateChatEvents = React.useCallback(() => updateState({}), []);
 
   const kills = props.events.filter(event =>
-    (event.event === 'say' || event.event === 'sayteam' || event.event === 'tell')
+    (event.event === 'say' ||
+     event.event === 'sayteam' ||
+     event.event === 'tell' ||
+     event.event === 'broadcast' ||
+     event.event === 'Exit')
   );
   const listItems = kills.toReversed().map((k, index) =>
-    <li key={index}>
-      <div className="card w-100">
-      <div className="card-body">
-        <p className="card-text">
+    <li key={index} className="translucent">
+      <div className="card w-100 translucent">
+      <div className="card-body translucent">
+        <p className="card-text translucent">
         <img className="card-icon" src="" alt={k.weapon_name} />
           <ChatMessage event={k} />
         </p>
