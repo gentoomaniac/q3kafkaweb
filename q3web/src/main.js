@@ -1,22 +1,20 @@
-import React from 'react';
-
 import { io } from 'socket.io-client';
 
 import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
 import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
 import {UpdateWeaponKillsPie} from "./components/WeaponKillsPie";
+import {UpdatePlayerKillsPie} from "./components/PlayerKillsPie";
 import {UpdateMapImage, SetMap  } from "./components/MapImage";
 
-export let GameState = { 'players': {}, 'weapons': {}};
-
 export let Events = [];
-
 
 var sio = null;
 
 const WORLD_ID = "1022"
 
+
+export let GameState = { 'players': {}, 'weapons': {} };
 
 function getNewWeaponDict(name){
     return {'name': name, 'kills': 0};
@@ -124,7 +122,8 @@ function onKillEvent(msg) {
     GameState.players[msg.target_id].deaths++;
   }
   UpdateKillEvents();
-  //UpdateWeaponKillsPie();
+  UpdateWeaponKillsPie();
+  UpdatePlayerKillsPie();
 }
 
 function onClientConnect(msg) {

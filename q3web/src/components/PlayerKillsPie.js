@@ -4,7 +4,7 @@ import { Pie } from 'react-chartjs-2';
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-export let UpdateWeaponKillsPie;
+export let UpdatePlayerKillsPie;
 
 const chartColors = [
   'rgba(255, 0, 0, 0.4)',
@@ -22,11 +22,11 @@ const chartColors = [
 ];
 
 
-const WeaponKillsPie = (props) => {
+const PlayerKillsPie = (props) => {
   const [, updateState] = React.useState();
-  UpdateWeaponKillsPie = React.useCallback(() => updateState({}), []);
+  UpdatePlayerKillsPie = React.useCallback(() => updateState({}), []);
 
-  let stats = Object.entries(props.gameState.weapons);
+  let players = Object.entries(props.gameState.players);
 
   const data = {
     labels: [],
@@ -46,7 +46,7 @@ const WeaponKillsPie = (props) => {
       },
       title: {
         display: true,
-        text: 'kills per weapon'
+        text: 'player kills'
       },
     },
   };
@@ -54,14 +54,14 @@ const WeaponKillsPie = (props) => {
   data.labels = [];
   data.datasets[0].data = [];
 
-  stats.forEach( (weapon) => {
-    let v = weapon[1];
-    data.labels.push(v.name);
-    data.datasets[0].data.push(v.kills);
+  players.forEach( (playerData) => {
+    let player = playerData[1];
+    data.labels.push(player.name);
+    data.datasets[0].data.push(player.kills-player.deaths);
   });
   data.datasets[0].backgroundColor = chartColors.slice(0, data.labels.length)
   data.datasets[0].borderColor = chartColors.slice(0, data.labels.length)
 
   return <Pie data={data} options={options}/>;
 }
-export default WeaponKillsPie;
+export default PlayerKillsPie ;

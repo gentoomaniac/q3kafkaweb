@@ -23,7 +23,6 @@ code {
     monospace;
 }
 
-
 .layout {
   border: 1px solid red;
 }
@@ -84,4 +83,15 @@ span.orange {
 .team-icon {
   width: 16px;
   height: auto;
+}
+
+.charts {
+  height: 20em;
+}
+
+.weaponsChart {
+  height: 360px; width: 45%;display:inline-block;
+}
+.playersChart {
+  height: 360px; width: 45%;margin-left:5%;display:inline-block;
 }

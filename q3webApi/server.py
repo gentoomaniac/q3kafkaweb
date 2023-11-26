@@ -6,10 +6,11 @@ import threading
 import time
 import uuid
 
+from datetime import datetime
+
 import kafka
 
-from flask import Flask, render_template, request, url_for
-from flask_bootstrap import Bootstrap5
+from flask import Flask, request
 from flask_socketio import SocketIO, emit
 
 from q3webApi.message_queue import MessageQueueReader
@@ -49,25 +50,37 @@ def _process_messages(data: dict):
         topic = topic_part.topic
 
         for kafka_msg in data[topic_part]:
+            if not cache['matches'].get(topic):
+                cache['matches'][topic] = {'messages': []}
+                log.debug("consuming new game: %s", topic)
 
-            if topic == 'matches':
-                cache['matches'][kafka_msg.value['id']].update(kafka_msg.value)
-            else:
-                if not cache['matches'].get(topic):
-                    cache['matches'][topic] = {'messages': []}
-                cache['matches'][topic]['messages'].append(kafka_msg.value)
-                if kafka_msg.value['event'] == 'GameEnded':
-                    log.debug("finished consuming %s", topic)
-                    # TODO: how to unsubscribe a given topic?
+            cache['matches'][topic]['messages'].append(kafka_msg.value)
+
+            if kafka_msg.value['event'] == 'GameEnded':
+                # log.debug("finished consuming %s", topic)
+                pass
+
+
+def _get_latest_match() -> str:
+    latest_id = ""
+    latest_date = None
+    for match_id, match in cache['matches'].items():
+        if match['messages'][-1]['event'] != "GameEndet":
+            last_event = match['messages'][-1]
+            event_timestamp = datetime.fromisoformat(last_event['timestamp'])
+            if not latest_date or event_timestamp < latest_date:
+                latest_date = event_timestamp
+                latest_id = match_id
+    return latest_id
 
 
 def _get_app(secret_key=str(uuid.uuid4())):
     app = Flask(__name__)
     app.secret_key = secret_key
-    return app, SocketIO(app, cors_allowed_origins='*'), Bootstrap5(app)
+    return app, SocketIO(app, cors_allowed_origins='*')
 
 
-app, socketio, bootstrap = _get_app(os.getenv('APP_SECRET', str(uuid.uuid4())))
+app, socketio = _get_app(os.getenv('APP_SECRET', str(uuid.uuid4())))
 
 
 @socketio.on('subscribe', namespace='/events')
@@ -83,16 +96,18 @@ def subscribe(game_id):
 
     log.info("processing game events ...")
     event_queue = MessageQueueReader(game['messages'])
+
     while RUN:
         try:
             event = next(event_queue)
             if event:
                 emit('event', json.dumps(event))
                 if event['event'] == 'GameEnded':
-                    break
+                    next_match = _get_latest_match()
+                    if next_match:
+                        emit('event', json.dumps({'next_match': next_match}))
         except StopIteration:
             time.sleep(1)
-    log.debug("finished handling `subscribe`")
 
 
 @socketio.on('connect', namespace='/events')

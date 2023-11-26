@@ -43,5 +43,8 @@ class MessageQueueReader():
         """
         self._index = 0
 
+    def seek_end(self):
+        self._index = len(self._data) - 1
+
     def __len__(self) -> int:
         return len(self._data)

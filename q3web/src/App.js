@@ -4,7 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import { Events, GameState } from './main';
-import SamplePieChart from "./components/WeaponKillsPie.js";
+import WeaponKillsPie from "./components/WeaponKillsPie.js";
+import PlayerKillsPie from "./components/PlayerKillsPie.js";
 
 import Layout from "./components/Layout/Layout";
 import ConnectPanel from "./components/ConnectPanel";
@@ -20,14 +21,19 @@ function App() {
           <ConnectPanel/>
           <MapImage />
         </div>
+        <div className="charts">
+          <div className="weaponsChart">
+            <WeaponKillsPie gameState={GameState} />
+          </div>
+          <div className="playersChart">
+            <PlayerKillsPie gameState={GameState} />
+          </div>
+        </div>
         <div className='transparent'>
           <KillEventsViewer events={Events} />
         </div>
         <div className='transparent'>
           <ChatViewer events={Events} gameState={GameState} />
-        </div>
-        <div className="content" id="toplist">
-          {/* <SamplePieChart gameState={GameState} /> */}
         </div>
     </Layout>
   );
