@@ -3,8 +3,8 @@ import { io } from 'socket.io-client';
 import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
 import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
-import {UpdateWeaponKillsPie} from "./components/WeaponKillsPie";
-import {UpdatePlayerKillsPie} from "./components/PlayerKillsPie";
+import {UpdateWeaponKillsChart} from "./components/WeaponKillsChart";
+import {UpdatePlayerKillsChart} from "./components/PlayerKillsChart";
 import {UpdateMapImage, SetMap  } from "./components/MapImage";
 
 export let Events = [];
@@ -122,8 +122,8 @@ function onKillEvent(msg) {
     GameState.players[msg.target_id].deaths++;
   }
   UpdateKillEvents();
-  UpdateWeaponKillsPie();
-  UpdatePlayerKillsPie();
+  UpdateWeaponKillsChart();
+  UpdatePlayerKillsChart();
 }
 
 function onClientConnect(msg) {

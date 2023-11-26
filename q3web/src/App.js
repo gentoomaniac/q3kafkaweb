@@ -4,8 +4,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import { Events, GameState } from './main';
-import WeaponKillsPie from "./components/WeaponKillsPie.js";
-import PlayerKillsPie from "./components/PlayerKillsPie.js";
+import WeaponKillsChart from "./components/WeaponKillsChart.js";
+import PlayerKillsChart from "./components/PlayerKillsChart.js";
 
 import Layout from "./components/Layout/Layout";
 import ConnectPanel from "./components/ConnectPanel";
@@ -23,10 +23,10 @@ function App() {
         </div>
         <div className="charts">
           <div className="weaponsChart">
-            <WeaponKillsPie gameState={GameState} />
+            <WeaponKillsChart gameState={GameState} />
           </div>
           <div className="playersChart">
-            <PlayerKillsPie gameState={GameState} />
+            <PlayerKillsChart gameState={GameState} />
           </div>
         </div>
         <div className='transparent'>
