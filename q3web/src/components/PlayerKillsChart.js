@@ -59,6 +59,8 @@ const PlayerKillsChart = (props) => {
   data.labels = [];
   data.datasets[0].data = [];
 
+
+  // TODO: something seems off with the score, to high kill kount or wrong calculation
   const players = Object.entries(props.gameState.players);
   const sortedPlayers = players.map( (item, index) => {
     let playerData = item[1];

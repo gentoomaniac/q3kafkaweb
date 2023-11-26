@@ -31,6 +31,8 @@ code {
   margin: 4em 2em 4em 2em;
   height: 30em;
   overflow-y: scroll;
+  width: 45%;
+  display:inline-block;
 }
 
 li {

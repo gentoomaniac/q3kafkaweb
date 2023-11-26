@@ -31,9 +31,9 @@ function App() {
         </div>
         <div className='transparent'>
           <KillEventsViewer events={Events} />
+          <ChatViewer events={Events} gameState={GameState} />
         </div>
         <div className='transparent'>
-          <ChatViewer events={Events} gameState={GameState} />
         </div>
     </Layout>
   );

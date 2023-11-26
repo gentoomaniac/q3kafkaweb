@@ -60,6 +60,9 @@ const WeaponKillsChart = (props) => {
   data.datasets[0].data = [];
 
 
+
+  // TODO: add images
+  // https://www.chartjs.org/chartjs-plugin-annotation/latest/samples/line/image.html
   const stats = Object.entries(props.gameState.weapons);
   const sortedWeapons = stats.map( (item, index) => {
     let data = item[1];
