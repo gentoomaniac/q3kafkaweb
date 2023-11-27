@@ -52,7 +52,7 @@ def _process_messages(data: dict):
         for kafka_msg in data[topic_part]:
             if not cache['matches'].get(topic):
                 cache['matches'][topic] = {'messages': []}
-                log.debug("consuming new game: %s", topic)
+                log.info("consuming new game: %s", topic)
 
             cache['matches'][topic]['messages'].append(kafka_msg.value)
 

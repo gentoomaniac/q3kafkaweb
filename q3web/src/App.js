@@ -3,7 +3,8 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
-import { Events, GameState } from './main';
+import { Events } from './main';
+import { GameState } from './GameState';
 import WeaponKillsChart from "./components/WeaponKillsChart.js";
 import PlayerKillsChart from "./components/PlayerKillsChart.js";
 

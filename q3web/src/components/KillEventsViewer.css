@@ -12,3 +12,13 @@
 .timestamp {
   margin: 0 15px 0 0px;
 }
+
+.actor-icon {
+  width: 24px;
+  height: auto;
+}
+
+.target-icon {
+  width: 24px;
+  height: auto;
+}

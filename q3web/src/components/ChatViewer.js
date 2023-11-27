@@ -19,7 +19,7 @@ const ChatViewer = (props) => {
   );
   const listItems = kills.toReversed().map((k, index) =>
     <li key={index}>
-      <div className="card w-100 translucent">
+      <div className="card w-git diff translucent">
       <div className="card-body">
         <p className="card-text">
         <img className="card-icon" src="" alt={k.weapon_name} />

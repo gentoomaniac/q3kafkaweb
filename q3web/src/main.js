@@ -1,5 +1,7 @@
 import { io } from 'socket.io-client';
 
+import GameState from "./GameState.js"
+
 import {UpdateKillEvents} from "./components/KillEventsViewer";
 import {UpdateChatEvents} from "./components/ChatViewer";
 import {UpdateGameEndedPopup} from "./components/GameEndedPopup";
@@ -11,10 +13,8 @@ export let Events = [];
 
 var sio = null;
 
-const WORLD_ID = "1022"
+const WORLD_ID = "1022";
 
-
-export let GameState = { 'players': {}, 'weapons': {} };
 
 function getNewWeaponDict(name){
     return {'name': name, 'kills': 0};
@@ -22,15 +22,6 @@ function getNewWeaponDict(name){
 
 function getNewPlayerDict(){
     return {'kills': 0, 'frags': 0, 'deaths': 0};
-}
-
-function getPlayerByName(name) {
-  Object.keys(GameState.players).forEach(function (key) {
-    console.log("checking player: " + GameState.players[key]);
-    if (GameState.players[key].name === name) return GameState.players[key];
-  });
-
-  return null;
 }
 
 export function setupSocketIO() {

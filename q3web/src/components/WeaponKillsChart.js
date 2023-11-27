@@ -50,7 +50,8 @@ const WeaponKillsChart = (props) => {
       },
       scales: {
         x: {
-          beginAtZero: true
+          beginAtZero: true,
+          stepSize: 1,
         },
       },
     },
